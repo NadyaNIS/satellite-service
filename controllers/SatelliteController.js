@@ -2,8 +2,8 @@ const Satellite = require("../models/Satellite");
 const request = require('request');
 const path = require('path');
 
-const locationService = 'http://127.0.0.1:56312/location-service';
-const defenseService = 'http://127.0.0.1:55329/defense-service';
+const locationService = 'http://34.68.190.190';
+const defenseService = 'http://35.226.17.192';
 
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
