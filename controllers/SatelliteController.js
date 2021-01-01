@@ -24,7 +24,7 @@ exports.createNewSatellite = (req, res) => {
     if (decoded.privileges.indexOf('ASSIGN_HERO') >= 0) {
       request.get({
         headers: { 'content-type': 'application/json', 'auth': token },
-        url: `${locationService}/${req.body.settled_location.lat}/${req.body.settled_location.long}`
+        url: `${locationService}/location-service/${req.body.settled_location.lat}/${req.body.settled_location.long}`
       },
         (req2, res2) => {
           const starlink_data = JSON.parse(res2.body).data;
@@ -32,7 +32,7 @@ exports.createNewSatellite = (req, res) => {
           if (starlink_data.length === 0) {
             request.get({
               headers: { 'content-type': 'application/json', 'auth': token },
-              url: `${defenseService}/${req.body.settled_location.lat}/${req.body.settled_location.long}`
+              url: `${defenseService}/defense-service/${req.body.settled_location.lat}/${req.body.settled_location.long}`
             },
               (req3, res3) => {
                 const defense_data = JSON.parse(res3.body).data;
