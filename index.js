@@ -8,7 +8,7 @@ const { PORT = 8000 } = process.env;
 
 
 app.get('/', function (req, res) {
-  res.send('hello world nodejs')
+  res.send('Satellite Service')
 })
 
 app.use(bodyParser.urlencoded({ extended: true }));
