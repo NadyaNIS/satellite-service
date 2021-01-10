@@ -21,7 +21,7 @@ exports.createNewSatellite = (req, res) => {
   try {
     const decoded = jwt.verify(token, publicKey);
     
-    if (decoded.privileges.indexOf('ASSIGN_HERO') >= 0) {
+    if (decoded.privileges.indexOf('ADD_TO_CONSTELLATION') >= 0) {
       request.get({
         headers: { 'content-type': 'application/json', 'auth': token },
         url: `${locationService}/location-service/${req.body.settled_location.lat}/${req.body.settled_location.long}`
@@ -72,10 +72,18 @@ exports.createNewSatellite = (req, res) => {
           }
         })
     } else {
-      res.status(401).send('Unauthorized.');
+      res.status(403).json({
+        statusCode: 403,
+        statusMessage: 'Access Denied',
+        data: []
+      });
     }
   } catch (error) {
-    res.status(401).send('Unauthorized.');
+    res.status(400).json({
+      statusCode: 400,
+      statusMessage: 'Something went wrong',
+      data: error
+    });
   }
 };
 
@@ -86,7 +94,7 @@ exports.readHealth = (req, res) => {
   try {
     const decoded = jwt.verify(token, publicKey);
     
-    if (decoded.privileges.indexOf('ASSIGN_HERO') >= 0) {
+    if (decoded.privileges.indexOf('READ_ANY') >= 0) {
       Satellite.findById(req.params.satelliteid, (err, satellite) => {
         if (err) {
           res.status(500).send(err);
@@ -99,11 +107,19 @@ exports.readHealth = (req, res) => {
         });
       });
     } else {
-      res.status(401).send('Unauthorized.');
+      res.status(403).json({
+        statusCode: 403,
+        statusMessage: 'Access Denied',
+        data: []
+      });
     }
   }
   catch (error) {
-    res.status(401).send('Unauthorized.');
+    res.status(400).json({
+      statusCode: 400,
+      statusMessage: 'Something went wrong',
+      data: error
+    });
   }
 };
 
@@ -112,7 +128,7 @@ exports.decomposeSatellite = (req, res) => {
   const token = req.headers.auth;
   const decoded = jwt.verify(token, publicKey);
   
-  if (decoded.privileges.indexOf('ASSIGN_HERO') >= 0) {
+  if (decoded.privileges.indexOf('DECOMPOSE_SATELLITE') >= 0) {
     Satellite.findById(req.params.satelliteid)
       .then(satellite => {
         const remaininglifespan = (satellite.expiration_date - new Date()) / 1000;
@@ -138,14 +154,22 @@ exports.decomposeSatellite = (req, res) => {
             }
           );
         } else {
-          res.status(200).json(satellite);
+          res.status(500).json({
+            statusCode: 500,
+            statusMessage: 'Cannot update',
+            data: []
+          });
         }
       })
       .catch(err => {
         res.status(500).send(err);
       })
   } else {
-    res.status(401).send('Unauthorized.');
+    res.status(403).json({
+      statusCode: 403,
+      statusMessage: 'Access Denied',
+      data: []
+    });
   }
 };
 
@@ -154,7 +178,7 @@ exports.maneuverSatellite = (req, res) => {
   const token = req.headers.auth;
   const decoded = jwt.verify(token, publicKey);
   
-  if (decoded.privileges.indexOf('ASSIGN_HERO') >= 0) {
+  if (decoded.privileges.indexOf('MANEUVER_SATELLITE') >= 0) {
     request.get({
       headers: { 'content-type': 'application/json', 'auth': token },
       url: `${locationService}/${req.body.settled_location.lat}/${req.body.settled_location.long}`
@@ -205,7 +229,11 @@ exports.maneuverSatellite = (req, res) => {
         }
       });
   } else {
-    res.status(401).send('Unauthorized.');
+    res.status(403).json({
+      statusCode: 403,
+      statusMessage: 'Access Denied',
+      data: []
+    });
   }
 };
 
